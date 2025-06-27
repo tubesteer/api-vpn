@@ -1,27 +1,30 @@
-import { NextResponse } from 'next/server';
+// api/check.js
 
-// Fungsi handler untuk permintaan GET
-export async function GET(request) {
-  // Dapatkan URL dari permintaan masuk
-  const url = new URL(request.url);
+import fetch from 'node-fetch'; // Anda mungkin perlu menginstal 'node-fetch' jika runtime-nya bukan Node.js terbaru
+
+export default async function handler(req, res) {
+  // Dapatkan URL dari request
+  const url = new URL(req.url, `http://${req.headers.host}`);
   
   // Dapatkan nilai dari parameter query 'target'
   const target = url.searchParams.get('target');
   
   // Cek apakah parameter 'target' ada
   if (!target) {
-    return NextResponse.json({ error: "Missing 'target' query parameter" }, { status: 400 });
+    res.status(400).json({ error: "Missing 'target' query parameter" });
+    return;
   }
 
   // Pisahkan IP dan port
   const [ip, port] = target.split(':');
   if (!ip || !port) {
-    return NextResponse.json({ error: "Invalid target format. Expected 'ip:port'" }, { status: 400 });
+    res.status(400).json({ error: "Invalid target format. Expected 'ip:port'" });
+    return;
   }
 
   // URL API eksternal untuk pemeriksaan kesehatan
   const PROXY_HEALTH_CHECK_API = "https://id1.foolvpn.me/api/v1/check";
-  const apiUrl = `${PROXY_HEALTH_CHECK_CHECK_API}?ip=${ip}:${port}`;
+  const apiUrl = `${PROXY_HEALTH_CHECK_API}?ip=${ip}:${port}`;
 
   try {
     // Lakukan permintaan ke API eksternal
@@ -29,20 +32,19 @@ export async function GET(request) {
 
     // Cek apakah respons berhasil
     if (!response.ok) {
-      // Jika respons tidak berhasil, kembalikan error dari API eksternal
       const errorText = await response.text();
-      return NextResponse.json({ error: `External API error: ${errorText}` }, { status: response.status });
+      res.status(response.status).json({ error: `External API error: ${errorText}` });
+      return;
     }
 
     // Parse respons JSON
     const data = await response.json();
     
-    // Kembalikan data yang diterima dari API
-    return NextResponse.json(data);
+    // Kembalikan data yang diterima
+    res.status(200).json(data);
 
   } catch (error) {
-    // Tangani error jaringan atau lainnya
     console.error('Failed to fetch health check API:', error);
-    return NextResponse.json({ error: 'Failed to check proxy health' }, { status: 500 });
+    res.status(500).json({ error: 'Failed to check proxy health' });
   }
 }
