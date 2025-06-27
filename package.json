@@ -1,25 +1,11 @@
 {
-  "name": "tubesteer",
+  "name": "vanilla-js-api",
   "version": "1.0.0",
-  "description": "Cf worker V2ray.",
-  "main": "app/api/check.js",
+  "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "vercel dev"
   },
   "dependencies": {
-    "next": "^14.2.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.5"
-  },
-  "engines": {
-    "node": ">=18.17.0"
-  },
-  "private": true
+    "node-fetch": "^2.6.1"
+  }
 }
