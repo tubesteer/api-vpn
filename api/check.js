@@ -1,83 +1,69 @@
-// api/check.js
+// This API route will check the health of a given proxy IP and port.
+// It proxies the request to an external health check service.
 
-// PENTING: Gunakan 'export default' untuk mengekspor fungsi handler di Vercel
-export default async function handler(req, res) {
-  // Log awal untuk setiap permintaan yang masuk
-  console.log('--- Incoming request to /api/check ---');
+// Define the external health check API endpoint.
+// Make sure to replace this with your actual external health check service URL.
+const PROXY_HEALTH_CHECK_API = "https://id1.foolvpn.me/api/v1/check";
 
-  // Dapatkan URL dari request. Perlu di-construct ulang karena `req.url` di Vercel hanya path-nya
-  const url = new URL(req.url, `http://${req.headers.host}`);
+/**
+ * @param {import('@vercel/node').VercelRequest} req
+ * @param {import('@vercel/node').VercelResponse} res
+ */
+export default async function (req, res) {
+  // Set CORS headers to allow requests from any origin.
+  const CORS_HEADER_OPTIONS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
+    "Access-Control-Max-Age": "86400",
+  };
+  for (const [key, value] of Object.entries(CORS_HEADER_OPTIONS)) {
+    res.setHeader(key, value);
+  }
+
+  // Handle pre-flight OPTIONS request for CORS.
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
   
-  // Dapatkan parameter 'target' dari query string
-  const target = url.searchParams.get('target');
-  console.log(`Received 'target' parameter: ${target}`);
-  
-  // Periksa jika parameter 'target' tidak ada
+  // Only allow GET requests.
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  // Get the 'target' query parameter from the request URL.
+  const { target } = req.query;
+
+  // Check if the 'target' parameter is provided.
   if (!target) {
-    console.error("Error: Missing 'target' query parameter");
-    // Gunakan objek `res` untuk mengirim respons
-    res.status(400).json({ error: "Missing 'target' query parameter" });
-    return;
+    return res.status(400).json({ error: 'Missing target query parameter (e.g., ?target=1.1.1.1:443)' });
   }
 
-  // Pisahkan IP dan port
-  const parts = target.split(':');
-  if (parts.length !== 2) {
-    console.error(`Error: Invalid target format for '${target}'`);
-    res.status(400).json({ error: "Invalid target format. Expected 'ip:port'" });
-    return;
-  }
-  const [ip, port] = parts;
-  
-  // URL API eksternal
-  const PROXY_HEALTH_CHECK_API = "https://id1.foolvpn.me/api/v1/check";
-  const apiUrl = `${PROXY_HEALTH_CHECK_API}?ip=${ip}:${port}`;
-  
-  // Log URL API eksternal yang akan dipanggil
-  console.log(`Calling external API for health check: ${apiUrl}`);
+  // Split the target to get the IP and port.
+  const [proxyIP, proxyPort] = target.split(":");
 
+  // Check for valid IP and port format.
+  if (!proxyIP || !proxyPort) {
+    return res.status(400).json({ error: 'Invalid target format. Use ip:port' });
+  }
+  
   try {
-    // Lakukan permintaan ke API eksternal.
-    // Di lingkungan Vercel, `fetch` sudah tersedia secara global.
-    const response = await fetch(apiUrl, {
-      signal: AbortSignal.timeout(10000) // Timeout 10 detik untuk mencegah hang
-    });
+    // Make a request to the external health check API.
+    const response = await fetch(`${PROXY_HEALTH_CHECK_API}?ip=${proxyIP}:${proxyPort}`);
 
-    // Periksa apakah respons dari API eksternal berhasil
+    // Check if the response from the external API is successful.
     if (!response.ok) {
-      const status = response.status;
-      const statusText = response.statusText;
-      const errorBody = await response.text();
-      
-      // Log error jika respons tidak OK
-      console.error(`External API responded with an error: Status ${status} - ${statusText}`);
-      console.error(`Response body from external API: ${errorBody}`);
-
-      res.status(status).json({ error: `External API error: ${statusText}` });
-      return;
+      // If the external API returns an error, forward that status and message.
+      return res.status(response.status).json({ error: `External API error: ${response.statusText}` });
     }
 
-    // Parse respons JSON jika berhasil
-    const data = await response.json();
-    
-    // Log data yang berhasil diterima
-    console.log('Successfully received data from external API:', data);
-    
-    // Kirim respons JSON yang berhasil ke klien
-    res.status(200).json(data);
+    // Parse the JSON response from the external API.
+    const result = await response.json();
 
+    // Send the JSON response back to the client.
+    return res.status(200).json(result);
   } catch (error) {
-    // Tangani error jaringan, timeout, atau parsing JSON
-    console.error('An exception occurred during the fetch operation:', error);
-    
-    // Identifikasi jenis error untuk pesan yang lebih informatif
-    if (error.name === 'AbortError') {
-      console.error('Fetch request timed out.');
-      res.status(504).json({ error: 'Request to external API timed out' });
-      return;
-    }
-    
-    console.error('Details:', error.message);
-    res.status(500).json({ error: 'Failed to check proxy health' });
+    // Catch any network or parsing errors and send a 500 Internal Server Error.
+    console.error('Error in proxy health check:', error);
+    return res.status(500).json({ error: 'An error occurred while checking proxy health.' });
   }
 }
