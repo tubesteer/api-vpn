@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
 
     <style>
       :root {
@@ -24,6 +26,21 @@
         --warning-color: #ff9800;
       }
 
+      body.light-mode {
+        --primary-bg: #f0f0f0;
+        --card-bg: #ffffff;
+        --accent-color: #007bff;
+        --text-color: #333333;
+        --secondary-text-color: #666666;
+        --border-color: rgba(0, 0, 0, 0.1);
+        --input-bg: #e9ecef;
+        --button-hover: #0056b3;
+        --loader-color: #007bff;
+        --error-color: #d9534f;
+        --success-color: #5cb85c;
+        --warning-color: #f0ad4e;
+      }
+
       * {
         box-sizing: border-box;
         font-family: 'Inter', sans-serif;
@@ -39,6 +56,7 @@
         justify-content: center;
         align-items: center;
         line-height: 1.6;
+        transition: background-color 0.3s, color 0.3s;
       }
 
       .app-container {
@@ -66,6 +84,10 @@
         margin-bottom: 0.5rem;
       }
 
+      body.light-mode .app-title {
+        text-shadow: none;
+      }
+
       .app-subtitle {
         font-size: 0.95rem;
         color: var(--secondary-text-color);
@@ -91,7 +113,7 @@
         border-radius: 8px;
         color: var(--text-color);
         font-size: 0.95rem;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s, color 0.3s;
       }
 
       .form-input::placeholder {
@@ -104,6 +126,11 @@
         border-color: var(--accent-color);
         box-shadow: 0 0 0 3px rgba(140, 255, 0, 0.3);
         outline: none;
+      }
+
+      body.light-mode .form-input:focus,
+      body.light-mode .form-select:focus {
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
       }
 
       .form-select {
@@ -177,11 +204,20 @@
         box-shadow: 0 4px 15px rgba(140, 255, 0, 0.4);
         margin-top: 1.5rem;
       }
+      
+      body.light-mode .btn-submit {
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+      }
 
       .btn-submit:hover {
         background-color: var(--button-hover);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(140, 255, 0, 0.6);
+      }
+      
+      body.light-mode .btn-submit:hover {
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
       }
 
       .btn-submit:disabled {
@@ -189,6 +225,10 @@
         cursor: not-allowed;
         box-shadow: none;
         transform: none;
+      }
+      
+      body.light-mode .btn-submit:disabled {
+        background-color: rgba(0, 123, 255, 0.4);
       }
 
       .copy-btn {
@@ -230,6 +270,10 @@
         width: 18px;
         height: 18px;
       }
+      
+      body.light-mode .refresh-status-btn:hover {
+          background-color: rgba(0, 123, 255, 0.05);
+      }
 
       .result-area {
         margin-top: 2rem;
@@ -264,6 +308,11 @@
         resize: vertical;
         overflow: auto;
       }
+      
+      body.light-mode .code-snippet {
+        background-color: #f8f9fa;
+        color: #333;
+      }
 
       /* Modal Overlay */
       .modal-overlay {
@@ -281,6 +330,10 @@
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      
+      body.light-mode .modal-overlay {
+        background-color: rgba(0, 0, 0, 0.5);
       }
 
       .modal-overlay.visible {
@@ -339,6 +392,11 @@
         height: 40px;
         animation: spin 1s linear infinite;
         margin-bottom: 1rem;
+      }
+      
+      body.light-mode .loader-spin {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-top: 4px solid var(--loader-color);
       }
 
       @keyframes spin {
@@ -409,6 +467,10 @@
       }
       .modal-btn:hover {
         background-color: var(--button-hover);
+      }
+      
+      body.light-mode .modal-btn {
+        color: white;
       }
 
       @media (max-width: 400px) {
@@ -488,6 +550,10 @@
         flex-direction: column;
         align-items: flex-start;
       }
+      
+      body.light-mode .proxy-item-card-status {
+        background-color: #f8f9fa;
+      }
 
       .proxy-item-card-status > div {
           width: 100%;
@@ -562,16 +628,31 @@
         color: var(--text-color);
         cursor: pointer;
       }
+      
+      body.light-mode .pagination-btn {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+      
       .pagination-btn.active {
         background-color: var(--accent-color);
         color: var(--primary-bg);
         border-color: var(--accent-color);
         font-weight: 600;
       }
+      
+      body.light-mode .pagination-btn.active {
+        color: white;
+      }
+
       .pagination-btn:not(.active):not(.disabled):hover {
           background-color: rgba(0, 0, 0, 0.25);
           border-color: var(--accent-color);
       }
+      
+      body.light-mode .pagination-btn:not(.active):not(.disabled):hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+      
       .pagination-btn.disabled {
           opacity: 0.5;
           cursor: not-allowed;
@@ -588,47 +669,100 @@
           margin-top: 0.75rem;
       }
 
-      .language-switcher-container {
+      /* New styles for mode and language toggles */
+      .settings-container {
           position: absolute;
           top: 1rem;
           right: 1.5rem;
           z-index: 10;
+          display: flex;
+          gap: 10px;
+          align-items: center;
+      }
+      
+    .icon-button {
+        background-color: transparent;
+        border: none;
+        color: var(--text-color);
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: color 0.2s ease, transform 0.2s ease;
+        font-size: 1rem;
+    }
+    
+    .icon-button:hover {
+        color: var(--accent-color);
+        background-color: transparent; /* Pastikan tidak ada latar belakang saat hover */
+        transform: scale(1.1); /* Tambahkan sedikit efek perbesaran */
+    }
+    
+    body.light-mode .icon-button:hover {
+        background-color: transparent; /* Pastikan tidak ada latar belakang saat hover di mode terang */
+    }
+
+      .dropdown {
+          position: relative;
+          display: inline-block;
       }
 
-      .language-switcher {
+      .dropdown-content {
+          display: none;
+          position: absolute;
           background-color: var(--input-bg);
-          border: 1px solid var(--border-color);
+          min-width: 150px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+          z-index: 1;
           border-radius: 8px;
-          color: var(--text-color);
-          padding: 0.5rem 0.75rem;
-          font-size: 0.8rem;
-          cursor: pointer;
+          padding: 5px;
+          top: 45px;
+          right: 0;
+          border: 1px solid var(--border-color);
+          animation: fadeIn 0.2s ease-out;
+      }
+      
+      @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .dropdown-content.show {
+          display: block;
       }
 
-      @media (min-width: 600px) {
-        .status-list-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .proxy-item-card-status {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .proxy-card-header-status {
-            flex-wrap: nowrap;
-        }
-        .proxy-name-status {
-            margin-right: 0;
-        }
+      .dropdown-item {
+          color: var(--text-color);
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+          cursor: pointer;
+          border-radius: 6px;
+          transition: background-color 0.2s, color 0.2s;
       }
+      
+      .dropdown-item:hover {
+          background-color: var(--card-bg);
+      }
+
     </style>
   </head>
   <body>
-    <div class="language-switcher-container">
-        <select id="language-switcher" class="language-switcher">
-            <option value="id">Bahasa Indonesia</option>
-            <option value="en">English</option>
-        </select>
+    <div class="settings-container">
+        <button id="theme-toggle" class="icon-button" title="Toggle Theme">
+            <i class="fas fa-sun"></i>
+        </button>
+        <div class="dropdown">
+            <button id="language-toggle" class="icon-button" title="Select Language">
+                <i class="fas fa-globe"></i>
+            </button>
+            <div id="language-dropdown" class="dropdown-content">
+                <a href="#" class="dropdown-item" data-lang="id">Bahasa Indonesia</a>
+                <a href="#" class="dropdown-item" data-lang="en">English</a>
+            </div>
+        </div>
     </div>
     <div class="app-container">
       <header class="app-header">
@@ -771,7 +905,8 @@
       const statusItemsPerPage = 10;
       let currentStatusPage = 1;
       let abortController = null;
-      let currentLanguage = 'id';
+      let currentLanguage = localStorage.getItem('language') || 'id';
+      let currentTheme = localStorage.getItem('theme') || 'dark';
 
       const translations = {
           id: {
@@ -874,7 +1009,10 @@
           }
       };
 
-      const languageSwitcher = document.getElementById("language-switcher");
+      const languageToggleBtn = document.getElementById("language-toggle");
+      const languageDropdown = document.getElementById("language-dropdown");
+      const themeToggleBtn = document.getElementById("theme-toggle");
+
       const configUrlModal = document.getElementById("config-url-modal");
       const closeConfigModalBtn = document.getElementById("close-config-modal");
 
@@ -912,6 +1050,7 @@
 
       function updateUIforLanguage(lang) {
           currentLanguage = lang;
+          localStorage.setItem('language', lang);
           document.querySelectorAll('[data-i18n]').forEach(element => {
               const key = element.getAttribute('data-i18n');
               if (translations[lang][key]) {
@@ -929,6 +1068,20 @@
           renderStatusProxyList();
       }
 
+      function toggleTheme() {
+          if (document.body.classList.contains('light-mode')) {
+              document.body.classList.remove('light-mode');
+              currentTheme = 'dark';
+              themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+              localStorage.setItem('theme', 'dark');
+          } else {
+              document.body.classList.add('light-mode');
+              currentTheme = 'light';
+              themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+              localStorage.setItem('theme', 'light');
+          }
+      }
+      
       function showLoading(messageKey, showProgress = false, showCancel = false) {
           loadingText.textContent = translations[currentLanguage][messageKey];
           loadingOverlay.classList.remove("hidden");
@@ -956,7 +1109,9 @@
 
       function displayMessage(messageKey, ...args) {
         let message = translations[currentLanguage][messageKey] || messageKey;
-        if (args.length > 0) {
+        if (typeof message === 'function') {
+            message = message(...args);
+        } else if (args.length > 0) {
             message = message.replace(/{(\d+)}/g, (match, number) => {
                 return typeof args[number] != 'undefined' ? args[number] : match;
             });
@@ -1043,7 +1198,7 @@
       }
 
       async function checkProxyStatus(proxy, signal = null) {
-        const statusURL = `https://yumiwolker.mayumiyui.workers.dev/check?target=${proxy.ip}:${proxy.port}`;
+        const statusURL = `https://apihealtcheck.vercel.app/api/v1?ip=${proxy.ip}&port=${proxy.port}`;
         const startTime = performance.now();
         try {
           const response = await fetch(statusURL, { signal, timeout: 5000 });
@@ -1084,7 +1239,10 @@
                 const proxies = results[index];
                 const option = countrySelect.querySelector(`option[value="${country.code}"]`);
                 if (option) {
-                    option.textContent = `${translations[currentLanguage][country.key]} (${proxies.length} proxy)`;
+                    const countryTranslation = translations[currentLanguage][country.key];
+                    // Ensure the part before the parenthesis is used for the count.
+                    const countryName = countryTranslation.split(' ')[0];
+                    option.textContent = `${countryName} (${proxies.length} proxy)`;
                 }
             });
           } catch (error) {
@@ -1229,7 +1387,16 @@
       }
 
       document.addEventListener("DOMContentLoaded", async function () {
-        updateUIforLanguage('id');
+        // Apply initial theme from localStorage
+        if (currentTheme === 'light') {
+            document.body.classList.add('light-mode');
+            themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+        } else {
+            document.body.classList.remove('light-mode');
+            themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        updateUIforLanguage(currentLanguage);
         showLoading("loading_fetching", false, false);
         
         allProxies = await getProxyListFromUrl(`${baseUrl}ALL.txt`);
@@ -1246,9 +1413,29 @@
         });
         serverDomainSelect.value = serverDomains[0];
 
-        languageSwitcher.addEventListener('change', (event) => {
-            updateUIforLanguage(event.target.value);
+        // Language toggle event listeners
+        languageToggleBtn.addEventListener('click', (event) => {
+            languageDropdown.classList.toggle('show');
+            event.stopPropagation(); // Prevent click from bubbling to document
         });
+
+        languageDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', (event) => {
+                event.preventDefault();
+                updateUIforLanguage(item.dataset.lang);
+                languageDropdown.classList.remove('show');
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!languageDropdown.contains(event.target) && !languageToggleBtn.contains(event.target)) {
+                languageDropdown.classList.remove('show');
+            }
+        });
+        
+        // Theme toggle event listener
+        themeToggleBtn.addEventListener('click', toggleTheme);
         
         mainTabsContainer.addEventListener("click", function (event) {
           if (event.target.classList.contains("main-tab-button")) {
@@ -1286,7 +1473,9 @@
                 const url = `${baseUrl}${customCountryId}.txt`;
                 const proxies = await getProxyListFromUrl(url);
                 if (proxies.length > 0) {
-                    customCountryCountInfo.textContent = `${translations[currentLanguage].country_id.split(' ')[0]}: ${proxies.length} proxy tersedia.`;
+                    const countryTranslation = translations[currentLanguage].country_id; // Using ID as a base for text
+                    const countryName = countryTranslation.split(' ')[0];
+                    customCountryCountInfo.textContent = `${countryName}: ${proxies.length} proxy tersedia.`;
                     customCountryCountInfo.style.color = "var(--success-color)";
                 } else {
                     customCountryCountInfo.textContent = translations[currentLanguage].message_no_proxies_available;
